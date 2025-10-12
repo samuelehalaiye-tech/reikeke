@@ -9,7 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 function Navbar() {
     const router = useRouter()
   return (
-    <View>
+    <View style={styles.container}>
         <Pressable onPress={()=> router.push("/driver/Home")}>
             <Ionicons name='home' size={26} color='orange'/>
         </Pressable>
@@ -26,4 +26,18 @@ function Navbar() {
   )
 }
 
+const styles =StyleSheet.create({
+    container:{
+        flexDirection: "row",
+        justifyContent: "space-around",
+        alignItems: "center",
+        paddingVertical: 12,
+        backgroundColor: "#1E1E1E",
+        position: "absolute",
+        bottom: 0,
+        width: "100%",
+        borderTopWidth: 1,
+        borderTopColor: "#333",
+    },
+})
 export default Navbar
