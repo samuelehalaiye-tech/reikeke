@@ -1,22 +1,10 @@
 import React from 'react'
-import { useRouter } from 'expo-router'
-import { View,Pressable,Text,StyleSheet } from 'react-native'
+import { View } from 'react-native'
+import Navbar from '../../components/Navbar'
 function home() {
-    const router = useRouter()
   return (
     <View>
-        <Pressable onPress={()=> router.push("/driver/Home")}>
-
-        </Pressable>
-        <Pressable onPress={()=> router.push("/driver/Offers")}>
-
-        </Pressable>
-        <Pressable onPress={()=> router.push("/driver/Profile")}>
-            
-        </Pressable>
-        <Pressable onPress={()=> router.push("/driver/AboutUs")}>
-            
-        </Pressable>
+        <Navbar/>
     </View>
   )
 }
