@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text,  StyleSheet } from 'react-native';
+import { View, Text,  StyleSheet, Pressable } from 'react-native';
 import Navbar from '../../components/Navbar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -10,6 +10,7 @@ export default function Offers() {
       <View style={styles.content}>
         <Text style={styles.title}>Welcome to offers! </Text>
       </View>
+      
       <Navbar />
     </SafeAreaView>
   );

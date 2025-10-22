@@ -1,14 +1,26 @@
-import React from 'react';
-import { View, Text,  StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text,  StyleSheet,Switch } from 'react-native';
 import Navbar from '../../components/Navbar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as ImagePicker from 'expo-image-picker';
+
 
 
 export default function Profile() {
+
+  const[isSwitchOn, setIsSwitchOn]=useState(false);
+
+  const toggleSwitch =()=>{
+    setIsSwitchOn(!isSwitchOn)
+  };
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Welcome to Profile!</Text>
+        <Text>
+          Number
+        </Text>
+        <Switch trackColor={{false:'red',true:'green'}} thumbColor={isSwitchOn? 'green':'red'} onValueChange={toggleSwitch} value={isSwitchOn}/>
+        <Text> {isSwitchOn?"You are active":'You are inactive'}</Text>
       </View>
       <Navbar />
     </SafeAreaView>
@@ -29,5 +41,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  ProfileVeiw:{
+
   },
 });
