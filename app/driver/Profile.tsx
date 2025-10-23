@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text,  StyleSheet,Switch } from 'react-native';
 import Navbar from '../../components/Navbar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as ImagePicker from 'expo-image-picker';
+
 
 
 
@@ -16,11 +16,8 @@ export default function Profile() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text>
-          Number
-        </Text>
-        <Switch trackColor={{false:'red',true:'green'}} thumbColor={isSwitchOn? 'green':'red'} onValueChange={toggleSwitch} value={isSwitchOn}/>
-        <Text> {isSwitchOn?"You are active":'You are inactive'}</Text>
+        <Switch trackColor={{false:'grey',true:'green'}} thumbColor={isSwitchOn? ' #FFA500':'grey'} onValueChange={toggleSwitch} value={isSwitchOn} style={styles.swicth}/>
+        <Text style={styles.swicthText}> {isSwitchOn?"You are active":'You are inactive'}</Text>
       </View>
       <Navbar />
     </SafeAreaView>
@@ -42,7 +39,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  ProfileVeiw:{
-
+  swicth:{
+    transform:[{scale:2.0}],
+    marginVertical:10,
+  },
+  swicthText:{
+    fontSize:40,
+    fontWeight:900,
+    color:'orange'
   },
 });
