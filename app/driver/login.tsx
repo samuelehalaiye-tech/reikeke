@@ -50,7 +50,7 @@ export default function SignupScreen() {
 
     try {
       const response = await fetch(
-        "http://10.246.56.13:8000/api/accounts/register//driver/",
+        "http://10.246.56.13:8000/api/accounts/login/",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -61,10 +61,10 @@ export default function SignupScreen() {
       const result = await response.json();
 
       if (response.ok) {
-        alert("Sign up successful!");
+        alert("Login successful!");
         router.push("/driver/home");
       } else {
-        alert(result.message || "Signup failed");
+        alert(result.message || "Login failed");
       }
     } catch (error) {
       console.error(error);
@@ -84,7 +84,7 @@ export default function SignupScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.container}>
-          <Text style={styles.title}>Create Account</Text>
+          <Text style={styles.title}>Login</Text>
 
         
           <Controller
@@ -109,7 +109,7 @@ export default function SignupScreen() {
             )}
           />
 
-    
+          {/* Password */}
           <Controller
             control={control}
             name="password"
@@ -140,11 +140,11 @@ export default function SignupScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => router.push("/driver/login")}
+            onPress={() => router.push("/driver/signup")}
             style={{ marginTop: 15 }}
           >
             <Text style={{ color: "orange", textAlign: "center" }}>
-              Already have an account? Login
+              Don't have an account? Create account
             </Text>
           </TouchableOpacity>
         </View>
