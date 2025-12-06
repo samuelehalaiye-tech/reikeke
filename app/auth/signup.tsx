@@ -10,11 +10,12 @@ import {
   ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
+import { useRouter, useSegments } from "expo-router";
 import { useAuth } from "../../context/AuthContext";
 
-export default function DriverSignupScreen() {
+export default function SignupScreen() {
   const router = useRouter();
+  const segments = useSegments();
   const { signup } = useAuth();
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -42,25 +43,33 @@ export default function DriverSignupScreen() {
       Alert.alert("Error", "Please enter a valid phone number");
       return;
     }
-
     try {
       setLoading(true);
-      await signup(phone, password, "driver");
-      Alert.alert("Success", "Driver account created successfully!");
-      router.replace("/(main)/ride-tracking/driver-offers");
+      // Determine role from current route
+      const role = segments.includes("driver") ? "driver" : "passenger";
+      await signup(phone, password, role);
+      await signup(phone, password, role);
+      
+      // Navigate to next screen based on role
+      if (role === "driver") {
+        router.replace("/(main)/ride-tracking/driver-offers");
+      } else {
+        router.replace("/(main)/ride-request");
+      }
     } catch (error: any) {
-      console.error("Driver signup failed:", error);
+      console.error("Signup failed:", error);
       Alert.alert("Signup Failed", error.message || "Please try again");
     } finally {
       setLoading(false);
     }
   };
+  const roleTitle = segments.includes("driver") ? "Driver" : "Passenger";
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>Become a Driver</Text>
-        <Text style={styles.subtitle}>Create your driver account</Text>
+        <Text style={styles.title}>Create {roleTitle} Account</Text>
+        <Text style={styles.subtitle}>Sign up to get started</Text>
 
         <View style={styles.form}>
           <View style={styles.inputGroup}>
@@ -80,7 +89,7 @@ export default function DriverSignupScreen() {
             <Text style={styles.label}>Password</Text>
             <TextInput
               style={styles.input}
-              placeholder="Enter password (min 6 characters)"
+              placeholder="Enter password"
               placeholderTextColor="#999"
               value={password}
               onChangeText={setPassword}
@@ -110,7 +119,7 @@ export default function DriverSignupScreen() {
             {loading ? (
               <ActivityIndicator color="white" />
             ) : (
-              <Text style={styles.buttonText}>Create Driver Account</Text>
+              <Text style={styles.buttonText}>Sign Up as {roleTitle}</Text>
             )}
           </Pressable>
 

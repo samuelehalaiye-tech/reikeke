@@ -1,22 +1,20 @@
 import { View, Text, StyleSheet, Pressable, Image } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router, useRouter } from "expo-router";
-
-
+import { useRouter } from "expo-router";
 
 export default function RoleSelectionScreen() {
-  const route = useRouter();
+  const router = useRouter();
   return (
     <SafeAreaView style={styles.container}>
       <Image source={require("../assets/images/reikeke.png")} style={styles.image} />
-      <Text style={styles.roleText}>Choose Your role</Text>
+      <Text style={styles.roleText}>Choose Your Role</Text>
       <View style={{gap:30}}>
-        <Pressable style={({pressed})=>[styles.button,pressed&&styles.buttonPressed]} onPress={()=>router.push("../driver/signup")}>
+        <Pressable style={({pressed})=>[styles.button,pressed&&styles.buttonPressed]} onPress={()=>router.push("/driver/signup")}>
           <Text style={styles.buttonText}>
             Driver
           </Text>
         </Pressable>
-        <Pressable style={({pressed})=>[styles.button,pressed&&styles.buttonPressed]}>
+        <Pressable style={({pressed})=>[styles.button,pressed&&styles.buttonPressed]} onPress={()=>router.push("/auth/signup")}>
           <Text style={styles.buttonText}>
             Passenger
           </Text>

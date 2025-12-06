@@ -13,44 +13,27 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useAuth } from "../../context/AuthContext";
 
-export default function DriverSignupScreen() {
+export default function LoginScreen() {
   const router = useRouter();
-  const { signup } = useAuth();
+  const { login } = useAuth();
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSignup = async () => {
-    // Validation
-    if (!phone || !password || !confirmPassword) {
+  const handleLogin = async () => {
+    if (!phone || !password) {
       Alert.alert("Error", "Please fill in all fields");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match");
-      return;
-    }
-
-    if (password.length < 6) {
-      Alert.alert("Error", "Password must be at least 6 characters");
-      return;
-    }
-
-    if (phone.length < 10) {
-      Alert.alert("Error", "Please enter a valid phone number");
       return;
     }
 
     try {
       setLoading(true);
-      await signup(phone, password, "driver");
-      Alert.alert("Success", "Driver account created successfully!");
-      router.replace("/(main)/ride-tracking/driver-offers");
+      await login(phone, password);
+      // Navigate based on role or default screen
+      router.replace("/(main)/ride-request");
     } catch (error: any) {
-      console.error("Driver signup failed:", error);
-      Alert.alert("Signup Failed", error.message || "Please try again");
+      console.error("Login failed:", error);
+      Alert.alert("Login Failed", error.message || "Invalid phone or password");
     } finally {
       setLoading(false);
     }
@@ -59,8 +42,8 @@ export default function DriverSignupScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>Become a Driver</Text>
-        <Text style={styles.subtitle}>Create your driver account</Text>
+        <Text style={styles.title}>Welcome Back!</Text>
+        <Text style={styles.subtitle}>Login to your account</Text>
 
         <View style={styles.form}>
           <View style={styles.inputGroup}>
@@ -80,7 +63,7 @@ export default function DriverSignupScreen() {
             <Text style={styles.label}>Password</Text>
             <TextInput
               style={styles.input}
-              placeholder="Enter password (min 6 characters)"
+              placeholder="Enter your password"
               placeholderTextColor="#999"
               value={password}
               onChangeText={setPassword}
@@ -89,35 +72,22 @@ export default function DriverSignupScreen() {
             />
           </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Confirm Password</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm password"
-              placeholderTextColor="#999"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry
-              editable={!loading}
-            />
-          </View>
-
           <Pressable
             style={({ pressed }) => [styles.button, pressed && styles.buttonPressed, loading && styles.buttonDisabled]}
-            onPress={handleSignup}
+            onPress={handleLogin}
             disabled={loading}
           >
             {loading ? (
               <ActivityIndicator color="white" />
             ) : (
-              <Text style={styles.buttonText}>Create Driver Account</Text>
+              <Text style={styles.buttonText}>Login</Text>
             )}
           </Pressable>
 
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Already have an account? </Text>
-            <Pressable onPress={() => router.push("/auth/LoginScreen")} disabled={loading}>
-              <Text style={styles.loginLink}>Login</Text>
+            <Text style={styles.footerText}>Don't have an account? </Text>
+            <Pressable onPress={() => router.push("/auth/RoleSelectionScreen")} disabled={loading}>
+              <Text style={styles.signupLink}>Sign Up</Text>
             </Pressable>
           </View>
         </View>
@@ -195,7 +165,7 @@ const styles = StyleSheet.create({
     color: "#666",
     fontSize: 14,
   },
-  loginLink: {
+  signupLink: {
     color: "orange",
     fontWeight: "700",
     fontSize: 14,
