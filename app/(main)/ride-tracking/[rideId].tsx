@@ -7,16 +7,29 @@ import {
   ActivityIndicator,
   Alert,
   ScrollView,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAuth } from "../../../context/AuthContext";
 import { api } from "../../../services/api";
 import { getWebSocketService, LocationUpdate, RideUpdate } from "../../../services/websocket";
 import { useDriverLocation } from "../../../hooks/useDriverLocation";
 
-interface RideData {
+let MapView: any = null;
+let Marker: any = null;
+let Polyline: any = null;
+let PROVIDER_GOOGLE: any = null;
+
+if (Platform.OS !== "web") {
+  const mapModule = require("react-native-maps");
+  MapView = mapModule.default;
+  Marker = mapModule.Marker;
+  Polyline = mapModule.Polyline;
+  PROVIDER_GOOGLE = mapModule.PROVIDER_GOOGLE;
+}
+
+interface TripData {
   id: number;
   status: string;
   passenger: {
@@ -40,19 +53,19 @@ interface RideData {
   completed_at?: string;
 }
 
-export default function RideTrackingScreen() {
+export default function TripTrackingScreen() {
   const router = useRouter();
   const { rideId } = useLocalSearchParams<{ rideId: string }>();
   const { user } = useAuth();
   const { location: driverLocation } = useDriverLocation(rideId ? Number(rideId) : undefined);
 
-  const [ride, setRide] = useState<RideData | null>(null);
+  const [ride, setRide] = useState<TripData | null>(null);
   const [loading, setLoading] = useState(true);
   const [driverCoords, setDriverCoords] = useState<{ latitude: number; longitude: number } | null>(
     null
   );
   const [offers, setOffers] = useState<any[]>([]);
-  const mapRef = useRef<MapView>(null);
+  const mapRef = useRef<any>(null);
   const wsUnsubscribe = useRef<Function | null>(null);
 
   useEffect(() => {
@@ -224,7 +237,7 @@ export default function RideTrackingScreen() {
         <Pressable onPress={() => router.back()}>
           <Text style={styles.backButton}>← Back</Text>
         </Pressable>
-        <Text style={styles.title}>Ride Tracking</Text>
+        <Text style={styles.title}>Trip Tracking</Text>
         <Text style={styles.status}>{ride.status.toUpperCase()}</Text>
       </View>
 
@@ -292,9 +305,9 @@ export default function RideTrackingScreen() {
         {/* Driver Info */}
         {ride.assigned_driver && (
           <View style={styles.driverCard}>
-            <Text style={styles.cardTitle}>Driver Information</Text>
+            <Text style={styles.cardTitle}>Keke Operator Information</Text>
             <View style={styles.cardRow}>
-              <Text style={styles.label}>Driver</Text>
+              <Text style={styles.label}>Operator</Text>
               <Text style={styles.value}>{ride.assigned_driver.phone_number}</Text>
             </View>
             {driverCoords && (
@@ -318,7 +331,7 @@ export default function RideTrackingScreen() {
 
         {/* Location Info */}
         <View style={styles.locationCard}>
-          <Text style={styles.cardTitle}>Route Information</Text>
+          <Text style={styles.cardTitle}>Trip Route</Text>
           <View style={styles.cardRow}>
             <Text style={styles.label}>Pickup</Text>
             <Text style={styles.value}>
@@ -336,7 +349,7 @@ export default function RideTrackingScreen() {
         {/* Offers (for passengers) */}
         {isPassenger && offers.length > 0 && (
           <View style={styles.offersCard}>
-            <Text style={styles.cardTitle}>Driver Offers</Text>
+            <Text style={styles.cardTitle}>Operator Offers</Text>
             {offers.map((offer) => (
               <View key={offer.id} style={styles.offerItem}>
                 <Text style={styles.offerDriver}>{offer.driver.phone_number}</Text>
@@ -367,7 +380,7 @@ export default function RideTrackingScreen() {
               onPress={handleConfirmRide}
               disabled={loading}
             >
-              <Text style={styles.confirmButtonText}>Confirm Driver</Text>
+              <Text style={styles.confirmButtonText}>Confirm Operator</Text>
             </Pressable>
           )}
 
@@ -377,7 +390,7 @@ export default function RideTrackingScreen() {
               onPress={handleCancelRide}
               disabled={loading}
             >
-              <Text style={styles.cancelButtonText}>Cancel Ride</Text>
+              <Text style={styles.cancelButtonText}>Cancel Trip</Text>
             </Pressable>
           )}
         </View>
@@ -554,38 +567,3 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
 });
-
-  useEffect(() => {
-    poll();
-    const t = setInterval(poll, 3000);
-    return () => clearInterval(t);
-  }, [rideId]);
-
-  if (!ride) return <ActivityIndicator style={{ flex: 1 }} size="large" />;
-
-  return (
-    <View style={{ flex: 1 }}>
-      <MapView
-        style={{ flex: 1 }}
-        region={{
-          latitude: ride.driver_location?.lat ?? ride.pickup_lat,
-          longitude: ride.driver_location?.lng ?? ride.pickup_lng,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        }}
-      >
-        {ride.driver_location && (
-          <Marker
-            coordinate={{ latitude: ride.driver_location.lat, longitude: ride.driver_location.lng }}
-            title="Driver"
-          />
-        )}
-        <Marker coordinate={{ latitude: ride.pickup_lat, longitude: ride.pickup_lng }} title="Pickup" />
-        <Marker coordinate={{ latitude: ride.dropoff_lat, longitude: ride.dropoff_lng }} title="Dropoff" />
-      </MapView>
-      <View style={{ padding: 12 }}>
-        <Text>Ride status: {ride.status}</Text>
-      </View>
-    </View>
-  );
-}

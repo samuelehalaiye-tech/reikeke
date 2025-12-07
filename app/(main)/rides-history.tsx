@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { api } from "../../services/api";
 
-interface HistoryRide {
+interface HistoryTrip {
   id: number;
   status: string;
   pickup_lat: number;
@@ -27,8 +27,8 @@ interface HistoryRide {
   } | null;
 }
 
-export default function PassengerRidesHistory() {
-  const [rides, setRides] = useState<HistoryRide[]>([]);
+export default function PassengerTripsHistory() {
+  const [trips, setTrips] = useState<HistoryTrip[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -39,10 +39,10 @@ export default function PassengerRidesHistory() {
   const loadHistory = async () => {
     try {
       const data = await api.get("/rides/passenger/history/");
-      setRides(Array.isArray(data) ? data : []);
+      setTrips(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error loading history:", err);
-      Alert.alert("Error", "Failed to load ride history");
+      Alert.alert("Error", "Failed to load trip history");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -82,7 +82,7 @@ export default function PassengerRidesHistory() {
     return (R * c).toFixed(2);
   };
 
-  const renderRideItem = ({ item }: { item: HistoryRide }) => {
+  const renderTripItem = ({ item }: { item: HistoryTrip }) => {
     const distance = calculateDistance(
       item.pickup_lat,
       item.pickup_lng,
@@ -93,25 +93,25 @@ export default function PassengerRidesHistory() {
 
     return (
       <Pressable
-        style={styles.rideCard}
+        style={styles.tripCard}
         onPress={() =>
           Alert.alert(
-            "Ride Details",
-            `Distance: ${distance} km\nCost: $${cost}\nDriver: ${item.driver_info?.phone || "Unknown"}`
+            "Trip Details",
+            `Distance: ${distance} km\nCost: $${cost}\nOperator: ${item.driver_info?.phone || "Unknown"}`
           )
         }
       >
-        <View style={styles.rideHeader}>
+        <View style={styles.tripHeader}>
           <View style={styles.headerInfo}>
-            <Text style={styles.rideId}>Ride #{item.id}</Text>
-            <Text style={styles.rideDate}>{formatDate(item.completed_at)}</Text>
+            <Text style={styles.tripId}>Trip #{item.id}</Text>
+            <Text style={styles.tripDate}>{formatDate(item.completed_at)}</Text>
           </View>
           <View style={styles.costTag}>
             <Text style={styles.costText}>${cost}</Text>
           </View>
         </View>
 
-        <View style={styles.rideBody}>
+        <View style={styles.tripBody}>
           <View style={styles.locationInfo}>
             <Text style={styles.locationIcon}>📍</Text>
             <View style={styles.locationDetails}>
@@ -135,9 +135,9 @@ export default function PassengerRidesHistory() {
           </View>
         </View>
 
-        <View style={styles.rideFooter}>
+        <View style={styles.tripFooter}>
           <Text style={styles.distanceText}>📊 {distance} km</Text>
-          <Text style={styles.ratingText}>⭐ Rate this ride</Text>
+          <Text style={styles.ratingText}>⭐ Rate this trip</Text>
         </View>
       </Pressable>
     );
@@ -156,25 +156,25 @@ export default function PassengerRidesHistory() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Ride History</Text>
+        <Text style={styles.headerTitle}>Trip History</Text>
         <Text style={styles.headerSubtitle}>
-          {rides.length} completed ride{rides.length !== 1 ? "s" : ""}
+          {trips.length} completed trip{trips.length !== 1 ? "s" : ""}
         </Text>
       </View>
 
-      {rides.length === 0 ? (
+      {trips.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyIcon}>📋</Text>
-          <Text style={styles.emptyText}>No rides yet</Text>
+          <Text style={styles.emptyText}>No trips yet</Text>
           <Text style={styles.emptySubtext}>
-            Your completed rides will appear here
+            Your completed trips will appear here
           </Text>
         </View>
       ) : (
         <FlatList
-          data={rides}
+          data={trips}
           keyExtractor={(item) => String(item.id)}
-          renderItem={renderRideItem}
+          renderItem={renderTripItem}
           contentContainerStyle={styles.listContent}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -222,7 +222,24 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     elevation: 2,
   },
+  tripCard: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    marginBottom: 12,
+    overflow: "hidden",
+    elevation: 2,
+  },
   rideHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: "#FFF8F0",
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
+  },
+  tripHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -240,7 +257,17 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#333",
   },
+  tripId: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#333",
+  },
   rideDate: {
+    fontSize: 12,
+    color: "#888",
+    marginTop: 2,
+  },
+  tripDate: {
     fontSize: 12,
     color: "#888",
     marginTop: 2,
@@ -257,6 +284,10 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   rideBody: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  tripBody: {
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
@@ -289,6 +320,14 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   rideFooter: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: "#f9f9f9",
+  },
+  tripFooter: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

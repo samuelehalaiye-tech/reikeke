@@ -14,7 +14,7 @@ export function useDriverLocation(activeRideId?: number | string) {
   const [error, setError] = useState<string | null>(null);
   const [isTracking, setIsTracking] = useState(false);
   const locationSubscription = useRef<Location.LocationSubscription | null>(null);
-  const uploadInterval = useRef<NodeJS.Timeout | null>(null);
+  const uploadInterval = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     let isMounted = true;

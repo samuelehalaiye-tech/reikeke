@@ -15,9 +15,9 @@ import { useAuth } from "../../context/AuthContext";
 import { api } from "../../services/api";
 
 interface PassengerStats {
-  total_rides: number;
+  total_trips: number;
   total_spent: number;
-  has_active_ride: boolean;
+  has_active_trip: boolean;
 }
 
 export default function PassengerHome() {
@@ -75,35 +75,35 @@ export default function PassengerHome() {
           style={styles.quickButton}
           onPress={() => router.push("/(main)/ride-request")}
         >
-          <Text style={styles.quickButtonIcon}>🚗</Text>
+          <Text style={styles.quickButtonIcon}>🛺</Text>
           <View style={styles.quickButtonContent}>
-            <Text style={styles.quickButtonTitle}>Request a Ride</Text>
+            <Text style={styles.quickButtonTitle}>Request a Keke</Text>
             <Text style={styles.quickButtonSubtitle}>Get to your destination</Text>
           </View>
           <Text style={styles.quickButtonArrow}>→</Text>
         </Pressable>
 
-        {/* Active Ride Status */}
-        {stats?.has_active_ride && (
+        {/* Active Trip Status */}
+        {stats?.has_active_trip && (
           <Pressable
-            style={styles.activeRideCard}
+            style={styles.activeTripCard}
             onPress={() => router.push("/(main)/rideTracking")}
           >
-            <View style={styles.activeRideContent}>
-              <Text style={styles.activeRideLabel}>🎯 Active Ride</Text>
-              <Text style={styles.activeRideText}>Your ride is on the way</Text>
+            <View style={styles.activeTripContent}>
+              <Text style={styles.activeTripLabel}>🎯 Active Trip</Text>
+              <Text style={styles.activeTripText}>Your keke is on the way</Text>
             </View>
-            <Text style={styles.activeRideArrow}>→</Text>
+            <Text style={styles.activeTripArrow}>→</Text>
           </Pressable>
         )}
 
         {/* Stats Grid */}
         <View style={styles.statsGrid}>
-          {/* Total Rides */}
+          {/* Total Trips */}
           <View style={styles.statCard}>
             <Text style={styles.statIcon}>📊</Text>
-            <Text style={styles.statLabel}>Total Rides</Text>
-            <Text style={styles.statValue}>{stats?.total_rides || 0}</Text>
+            <Text style={styles.statLabel}>Total Trips</Text>
+            <Text style={styles.statValue}>{stats?.total_trips || 0}</Text>
           </View>
 
           {/* Total Spent */}
@@ -256,10 +256,30 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderLeftColor: "#FFA500",
   },
+  activeTripCard: {
+    marginHorizontal: 16,
+    marginBottom: 16,
+    backgroundColor: "#FFF3E0",
+    padding: 16,
+    borderRadius: 12,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderLeftWidth: 4,
+    borderLeftColor: "#FFA500",
+  },
   activeRideContent: {
     flex: 1,
   },
+  activeTripContent: {
+    flex: 1,
+  },
   activeRideLabel: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#FFA500",
+  },
+  activeTripLabel: {
     fontSize: 14,
     fontWeight: "700",
     color: "#FFA500",
@@ -269,7 +289,16 @@ const styles = StyleSheet.create({
     color: "#666",
     marginTop: 2,
   },
+  activeTripText: {
+    fontSize: 12,
+    color: "#666",
+    marginTop: 2,
+  },
   activeRideArrow: {
+    fontSize: 16,
+    color: "#FFA500",
+  },
+  activeTripArrow: {
     fontSize: 16,
     color: "#FFA500",
   },

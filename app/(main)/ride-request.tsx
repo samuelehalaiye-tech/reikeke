@@ -22,7 +22,7 @@ interface LocationData {
   address: string;
 }
 
-export default function RideRequestScreen() {
+export default function TripRequestScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const { location: currentLocation } = useDriverLocation();
@@ -31,7 +31,7 @@ export default function RideRequestScreen() {
   const [dropoffLocation, setDropoffLocation] = useState<LocationData | null>(null);
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<"pickup" | "dropoff" | "confirm">("pickup");
-  const [rideId, setRideId] = useState<number | null>(null);
+  const [tripId, setTripId] = useState<number | null>(null);
   const mapRef = useRef<MapView>(null);
 
   useEffect(() => {
@@ -103,7 +103,7 @@ export default function RideRequestScreen() {
     }
   };
 
-  const handleRequestRide = async () => {
+  const handleRequestTrip = async () => {
     if (!pickupLocation || !dropoffLocation) {
       Alert.alert("Error", "Please select both pickup and dropoff locations");
       return;
@@ -118,8 +118,8 @@ export default function RideRequestScreen() {
         dropoff_lng: dropoffLocation.longitude,
       });
 
-      setRideId(response.id);
-      Alert.alert("Success", "Ride request created! Waiting for drivers...");
+      setTripId(response.id);
+      Alert.alert("Success", "Trip request created! Waiting for keke operators...");
       setStep("confirm");
 
       // Navigate to ride tracking after a delay
@@ -130,8 +130,8 @@ export default function RideRequestScreen() {
         });
       }, 2000);
     } catch (error: any) {
-      console.error("Failed to request ride:", error);
-      Alert.alert("Error", error.message || "Failed to create ride request");
+      console.error("Failed to request trip:", error);
+      Alert.alert("Error", error.message || "Failed to create trip request");
     } finally {
       setLoading(false);
     }
@@ -140,13 +140,13 @@ export default function RideRequestScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Request a Ride</Text>
+        <Text style={styles.title}>Request a Keke</Text>
         <Text style={styles.subtitle}>
           {step === "pickup"
             ? "Select pickup location"
             : step === "dropoff"
             ? "Select dropoff location"
-            : "Confirm your ride"}
+            : "Confirm your trip"}
         </Text>
       </View>
 
@@ -218,13 +218,13 @@ export default function RideRequestScreen() {
         {pickupLocation && dropoffLocation && (
           <Pressable
             style={[styles.requestButton, loading && styles.requestButtonDisabled]}
-            onPress={handleRequestRide}
+            onPress={handleRequestTrip}
             disabled={loading}
           >
             {loading ? (
               <ActivityIndicator color="white" />
             ) : (
-              <Text style={styles.requestButtonText}>Request Ride</Text>
+              <Text style={styles.requestButtonText}>Request Keke</Text>
             )}
           </Pressable>
         )}
